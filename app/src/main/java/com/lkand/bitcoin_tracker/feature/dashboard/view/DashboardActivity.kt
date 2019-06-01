@@ -22,22 +22,24 @@ class DashboardActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.setBinding()
-        this.setViewModel()
+        this.initBinding()
+        this.initViewModel()
 
+    }
+
+    private fun initBinding() {
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard)
+        this.setBinding()
     }
 
     private fun setBinding() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard)
-        binding.setVariable(BR.viewmodel, this.viewModel)
-        binding.executePendingBindings()
+        this.binding.setVariable(BR.viewmodel, this.viewModel)
+        this.binding.executePendingBindings()
     }
 
-    private fun setViewModel() {
+    private fun initViewModel() {
         this.viewModel.transform().observe(this, Observer { model ->
-            Log.d("DebugUtil", "Changed" + model.toString())
-            binding.setVariable(BR.viewmodel, this.viewModel)
-            binding.executePendingBindings()
+            this.setBinding()
         })
     }
 

@@ -13,17 +13,18 @@ import okhttp3.WebSocketListener
 class DashboardViewModel: ViewModel() {
 
     private val responseModel = MutableLiveData<DashboardResponseModel>()
-    private val loginCode = MutableLiveData<String>()
+    private val responseBuyModel = MutableLiveData<DashboardResponseModel>()
+    private val responseSellModel = MutableLiveData<DashboardResponseModel>()
 
     fun transform(): MutableLiveData<DashboardResponseModel> {
         val socket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
 
-        val timer = object: CountDownTimer(5000,1000) {
+        val timer = object: CountDownTimer(10000,1000) {
             override fun onTick(millisUntilFinished: Long) {
-                Log.d("DebugUtil, tick", millisUntilFinished.toString())
+                 Log.d("DebugUtil, tick", millisUntilFinished.toString())
             }
             override fun onFinish() {
-                socket.close(1000, "5s up")
+                socket.close(1000, "10s up")
             }
         }
         timer.start()
@@ -53,15 +54,23 @@ class DashboardViewModel: ViewModel() {
             override fun onMessage(webSocket: WebSocket, text: String) {
                 super.onMessage(webSocket, text)
 
-                this@DashboardViewModel.responseModel.postValue(DashboardResponseModel(text))
-                Log.d("DebugUtil, string", text)
+                val responseModel = DashboardResponseModel(text)
+                this@DashboardViewModel.responseModel.postValue(responseModel)
+                Log.d("DebugUtil, ", text)
+
+                if (responseModel.side == "sell") {
+                    this@DashboardViewModel.responseSellModel.postValue(responseModel)
+                }
+                else if (responseModel.side == "buy") {
+                    this@DashboardViewModel.responseBuyModel.postValue(responseModel)
+                }
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 super.onClosed(webSocket, code, reason)
 
                 webSocket.close(1000, null)
-                Log.d("DebugUtil", "closed")
+                Log.d("DebugUtil", "Closed")
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -73,16 +82,22 @@ class DashboardViewModel: ViewModel() {
         }
     }
 
-    fun getLoginCode(): String {
-        return if(this.loginCode.value != null) this.loginCode.value!! else "Loading.."
+    fun getResponseBuyModel(): DashboardResponseModel {
+        return if(this.responseBuyModel.value != null) this.responseBuyModel.value!! else DashboardResponseModel("""
+            {
+                type: "Loading ...",
+                price: 0,
+                side: "Loading ..."
+            }
+        """.trimIndent())
     }
 
-    fun getResponseModel(): DashboardResponseModel {
-        return if(this.responseModel.value != null) this.responseModel.value!! else DashboardResponseModel("""
+    fun getResponseSellModel(): DashboardResponseModel {
+        return if(this.responseSellModel.value != null) this.responseSellModel.value!! else DashboardResponseModel("""
             {
-                type: "Loading",
+                type: "Loading ...",
                 price: 0,
-                side: "Loading"
+                side: "Loading ..."
             }
         """.trimIndent())
     }
