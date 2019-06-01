@@ -38,9 +38,7 @@ class DashboardActivity: AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        this.viewModel.transform().observe(this, Observer { model ->
-            this.setBinding()
-        })
+        this.viewModel.transform().observe(this, Observer { this.setBinding() })
     }
 
 }
