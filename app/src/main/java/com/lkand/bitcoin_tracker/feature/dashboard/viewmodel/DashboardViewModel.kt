@@ -1,31 +1,33 @@
-package com.lkand.bitcoin_tracker
+package com.lkand.bitcoin_tracker.feature.dashboard.viewmodel
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
 import android.os.CountDownTimer
 import android.util.Log
+import com.lkand.bitcoin_tracker.feature.dashboard.model.DashboardModel
 import com.lkand.bitcoin_tracker.util.NetworkUtil
-import okhttp3.*
-import okio.ByteString
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 
-class MainActivity : AppCompatActivity() {
+class DashboardViewModel: ViewModel() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    private val responseModel = MutableLiveData<DashboardModel>()
+    private val viewStatus = MutableLiveData<Int>()
+    private val loginCode = MutableLiveData<String>()
 
-        val websocket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
+    fun transform() {
+        val socket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
 
         val timer = object: CountDownTimer(5000,1000) {
             override fun onTick(millisUntilFinished: Long) {
                 Log.d("DebugUtil, tick", millisUntilFinished.toString())
             }
             override fun onFinish() {
-                websocket.close(1000, "5s up")
+                socket.close(1000, "5s up")
             }
         }
         timer.start()
-
     }
 
     private fun bitcoinRateListener(): WebSocketListener {
@@ -47,12 +49,6 @@ class MainActivity : AppCompatActivity() {
                 """.trimIndent())
             }
 
-            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                super.onMessage(webSocket, bytes)
-
-                Log.d("DebugUtil, byte", bytes.toString())
-            }
-
             override fun onMessage(webSocket: WebSocket, text: String) {
                 super.onMessage(webSocket, text)
 
@@ -63,18 +59,18 @@ class MainActivity : AppCompatActivity() {
                 super.onClosed(webSocket, code, reason)
 
                 webSocket.close(1000, null)
-                runOnUiThread(object: Runnable {
-                    override fun run() {
-                        Log.d("DebugUtil, run", "close")
-                    }
-                })
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 super.onFailure(webSocket, t, response)
+
                 t.printStackTrace()
             }
 
         }
+    }
+
+    fun getLoginCode(): String {
+        return if(this.loginCode.value != null) this.loginCode.value!! else "Loading.."
     }
 }
