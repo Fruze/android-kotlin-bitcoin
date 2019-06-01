@@ -1,15 +1,25 @@
 package com.lkand.bitcoin_tracker.feature.dashboard.view
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
+import android.view.animation.*
+import android.widget.TextView
 import com.lkand.bitcoin_tracker.BR
 import com.lkand.bitcoin_tracker.R
 import com.lkand.bitcoin_tracker.databinding.ActivityDashboardBinding
 import com.lkand.bitcoin_tracker.feature.dashboard.viewmodel.DashboardViewModel
+import kotlinx.android.synthetic.main.activity_dashboard.*
 
 class DashboardActivity: AppCompatActivity() {
 
@@ -38,7 +48,43 @@ class DashboardActivity: AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        this.viewModel.transform().observe(this, Observer { this.setBinding() })
+        this.viewModel.transform().observe(this, Observer { _ ->
+            this.checkStatus()
+            this.setBinding()
+        })
+    }
+
+    private fun checkStatus() {
+        if (dashboardBuyPrice.text.toString() > this.viewModel.getResponseBuyModel().price.toString()) {
+            this.animateStatus(dashboardBuyPrice, Color.RED)
+        }
+        else if (dashboardBuyPrice.text.toString() < this.viewModel.getResponseBuyModel().price.toString()) {
+            this.animateStatus(dashboardBuyPrice, Color.GREEN)
+        }
+        else {
+            this.animateStatus(dashboardBuyPrice, Color.GRAY)
+        }
+
+        if (dashboardSellPrice.text.toString() > this.viewModel.getResponseSellModel().price.toString()) {
+            this.animateStatus(dashboardSellPrice, Color.RED)
+        }
+        else if (dashboardSellPrice.text.toString() < this.viewModel.getResponseSellModel().price.toString()) {
+            this.animateStatus(dashboardSellPrice, Color.GREEN)
+        }
+        else {
+            this.animateStatus(dashboardSellPrice, Color.GRAY)
+        }
+    }
+
+    private fun animateStatus(textView: TextView, color: Int) {
+        ObjectAnimator.ofObject(
+            textView,
+            "textColor",
+            ArgbEvaluator(),
+            color,
+            Color.WHITE)
+            .setDuration(500)
+            .start()
     }
 
 }

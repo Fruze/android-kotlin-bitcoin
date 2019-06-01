@@ -19,7 +19,7 @@ class DashboardViewModel: ViewModel() {
     fun transform(): MutableLiveData<DashboardResponseModel> {
         val socket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
 
-        val timer = object: CountDownTimer(10000,1000) {
+        val timer = object: CountDownTimer(30000,1000) {
             override fun onTick(millisUntilFinished: Long) {
                  Log.d("DebugUtil, tick", millisUntilFinished.toString())
             }
