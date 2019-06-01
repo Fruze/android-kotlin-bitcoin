@@ -115,6 +115,6 @@ class DashboardViewModel: ViewModel() {
         val seconds = (countDown.div(10)).toString()
         val milliseconds = (countDown.rem(10)).toString() + "0"
 
-        return seconds + ":" + milliseconds
+        return "$seconds:$milliseconds"
     }
 }

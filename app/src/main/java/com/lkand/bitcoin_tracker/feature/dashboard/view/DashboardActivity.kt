@@ -34,7 +34,6 @@ class DashboardActivity: AppCompatActivity() {
 
         this.initBinding()
         this.initViewModel()
-
     }
 
     private fun initBinding() {
