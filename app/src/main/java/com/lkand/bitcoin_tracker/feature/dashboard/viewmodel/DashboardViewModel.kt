@@ -15,21 +15,24 @@ class DashboardViewModel: ViewModel() {
     private val responseModel = MutableLiveData<DashboardResponseModel>()
     private val responseBuyModel = MutableLiveData<DashboardResponseModel>()
     private val responseSellModel = MutableLiveData<DashboardResponseModel>()
+    private val socketIsClosed = MutableLiveData<Boolean>()
+    private val socketCountDown = MutableLiveData<Int>()
 
-    fun transform(): MutableLiveData<DashboardResponseModel> {
-        val socket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
+    fun transform(): MutableLiveData<Int> {
+        val socket = NetworkUtil.create("wss://ws-feed.gdax.com/", bitcoinRateListener())
 
-        val timer = object: CountDownTimer(30000,1000) {
+        val timer = object: CountDownTimer(60000,100) {
             override fun onTick(millisUntilFinished: Long) {
-                 Log.d("DebugUtil, tick", millisUntilFinished.toString())
+                this@DashboardViewModel.socketCountDown.value = (millisUntilFinished / 100).toInt()
             }
             override fun onFinish() {
                 socket.close(1000, "10s up")
+                this@DashboardViewModel.socketIsClosed.value = true
             }
         }
         timer.start()
 
-        return responseModel
+        return this.socketCountDown
     }
 
     private fun bitcoinRateListener(): WebSocketListener {
@@ -45,7 +48,7 @@ class DashboardViewModel: ViewModel() {
                             "BTC-USD"
                         ],
                         "channels": [
-                            "matches"
+                            "ticker"
                         ]
                     }
                 """.trimIndent())
@@ -100,5 +103,18 @@ class DashboardViewModel: ViewModel() {
                 side: "Loading ..."
             }
         """.trimIndent())
+    }
+
+    fun getSocketCountDown(): String {
+        if (this.socketCountDown.value == null) {
+            return "00:00"
+        }
+
+        val countDown = this.socketCountDown.value!!
+
+        val seconds = (countDown.div(10)).toString()
+        val milliseconds = (countDown.rem(10)).toString() + "0"
+
+        return "$seconds:$milliseconds"
     }
 }
