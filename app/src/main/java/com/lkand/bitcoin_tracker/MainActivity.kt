@@ -2,11 +2,11 @@ package com.lkand.bitcoin_tracker
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
-import com.androidnetworking.AndroidNetworking
+import com.lkand.bitcoin_tracker.util.NetworkUtil
 import okhttp3.*
 import okio.ByteString
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,15 +14,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val client = OkHttpClient.Builder()
-            .readTimeout(0, TimeUnit.MILLISECONDS)
-            .build()
+        val websocket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
 
-        val request = Request.Builder()
-            .url("wss://ws-feed.pro.coinbase.com")
-            .build()
+        val timer = object: CountDownTimer(5000,1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                Log.d("DebugUtil, tick", millisUntilFinished.toString())
+            }
+            override fun onFinish() {
+                websocket.close(1000, "5s up")
+            }
+        }
+        timer.start()
 
-//        client.newWebSocket(request, bitcoinRateListener())
     }
 
     private fun bitcoinRateListener(): WebSocketListener {
@@ -42,28 +45,27 @@ class MainActivity : AppCompatActivity() {
                         ]
                     }
                 """.trimIndent())
-                webSocket.close(10000, "hehe")
             }
 
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
                 super.onMessage(webSocket, bytes)
 
-                Log.e("byte", bytes.toString())
+                Log.d("DebugUtil, byte", bytes.toString())
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
                 super.onMessage(webSocket, text)
 
-                Log.e("string", text)
+                Log.d("DebugUtil, string", text)
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 super.onClosed(webSocket, code, reason)
 
-                webSocket.close(10000, null)
+                webSocket.close(1000, null)
                 runOnUiThread(object: Runnable {
                     override fun run() {
-                        Log.e("run", "close")
+                        Log.d("DebugUtil, run", "close")
                     }
                 })
             }
