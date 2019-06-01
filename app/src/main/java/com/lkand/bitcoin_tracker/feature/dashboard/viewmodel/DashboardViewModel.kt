@@ -19,9 +19,9 @@ class DashboardViewModel: ViewModel() {
     private val socketCountDown = MutableLiveData<Int>()
 
     fun transform(): MutableLiveData<Int> {
-        val socket = NetworkUtil.create("wss://ws-feed.pro.coinbase.com", bitcoinRateListener())
+        val socket = NetworkUtil.create("wss://ws-feed.gdax.com/", bitcoinRateListener())
 
-        val timer = object: CountDownTimer(30000,100) {
+        val timer = object: CountDownTimer(60000,100) {
             override fun onTick(millisUntilFinished: Long) {
                 this@DashboardViewModel.socketCountDown.value = (millisUntilFinished / 100).toInt()
             }
@@ -48,7 +48,7 @@ class DashboardViewModel: ViewModel() {
                             "BTC-USD"
                         ],
                         "channels": [
-                            "matches"
+                            "ticker"
                         ]
                     }
                 """.trimIndent())
