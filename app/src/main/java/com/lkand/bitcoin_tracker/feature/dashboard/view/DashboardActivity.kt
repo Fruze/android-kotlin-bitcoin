@@ -61,18 +61,12 @@ class DashboardActivity: AppCompatActivity() {
         else if (dashboardBuyPrice.text.toString() < this.viewModel.getResponseBuyModel().price.toString()) {
             this.animateStatus(dashboardBuyPrice, Color.GREEN)
         }
-        else {
-            this.animateStatus(dashboardBuyPrice, Color.GRAY)
-        }
 
         if (dashboardSellPrice.text.toString() > this.viewModel.getResponseSellModel().price.toString()) {
             this.animateStatus(dashboardSellPrice, Color.RED)
         }
         else if (dashboardSellPrice.text.toString() < this.viewModel.getResponseSellModel().price.toString()) {
             this.animateStatus(dashboardSellPrice, Color.GREEN)
-        }
-        else {
-            this.animateStatus(dashboardSellPrice, Color.GRAY)
         }
     }
 
