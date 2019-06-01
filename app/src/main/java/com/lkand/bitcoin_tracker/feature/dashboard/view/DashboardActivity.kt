@@ -2,18 +2,12 @@ package com.lkand.bitcoin_tracker.feature.dashboard.view
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.View
-import android.view.animation.*
 import android.widget.TextView
 import com.lkand.bitcoin_tracker.BR
 import com.lkand.bitcoin_tracker.R
