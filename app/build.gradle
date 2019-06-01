@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -20,17 +19,35 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+
+    implementation deps.android.appCompat
+    implementation deps.android.constraintLayout
+    implementation deps.android.viewModel
+    implementation deps.fast_android_networking.rx2
 
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+buildscript {
+    ext.deps = [
+            android: [
+                    'appCompat': 'com.android.support:appcompat-v7:28.0.0',
+                    'constraintLayout': 'com.android.support.constraint:constraint-layout:1.1.3',
+                    'viewModel': 'android.arch.lifecycle:extensions:1.1.0'
+            ],
+            fast_android_networking: [
+                    'rx2': 'com.amitshekhar.android:rx2-android-networking:1.0.1'
+            ]
+    ]
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<data>
+
+		<variable
+			name="viewmodel"
+			type="com.lkand.bitcoin_tracker.feature.dashboard.viewmodel.DashboardViewModel" />
+	</data>
+
+
+	<android.support.constraint.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<android.support.constraint.ConstraintLayout
+			android:layout_width="300dp"
+			android:layout_height="wrap_content"
+			android:alpha="0.8"
+			android:background="@color/colorPrimaryDark"
+			android:padding="30dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintCircleRadius="2dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<TextView
+				android:id="@+id/dashboardBuyLabel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/dashboard_buy_label"
+				android:textColor="@color/colorWhite"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<TextView
+				android:id="@+id/dashboardBuyPrice"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:hint="@string/app_loading"
+				android:text="@{viewmodel.responseBuyModel.price.toString().trim()}"
+				android:textColor="@color/colorWhite"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dashboardBuyLabel" />
+
+			<TextView
+				android:id="@+id/dashboardSellLabel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp"
+				android:text="@string/dashboard_sell_label"
+				android:textColor="@color/colorWhite"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dashboardBuyPrice" />
+
+			<TextView
+				android:id="@+id/dashboardSellPrice"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:hint="@string/app_loading"
+				android:text="@{viewmodel.responseSellModel.price.toString().trim()}"
+				android:textColor="@color/colorWhite"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/dashboardSellLabel" />
+
+		</android.support.constraint.ConstraintLayout>
+
+
+	</android.support.constraint.ConstraintLayout>
+
+</layout>
