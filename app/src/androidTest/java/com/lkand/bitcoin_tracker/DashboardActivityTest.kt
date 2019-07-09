@@ -35,7 +35,7 @@ class DashboardActivityTest {
     }
 
     @Test
-    fun checkPriceAfterTenSecond() {
+    fun checkPriceAfterFiveSecond() {
         Thread.sleep(5000)
 
         val buyPrice = this.activityRule.activity.findViewById<TextView>(R.id.dashboardBuyPrice)

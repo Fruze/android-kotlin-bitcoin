@@ -18,7 +18,7 @@ class DashboardViewModelUnitTest {
 
     @Rule
     @JvmField
-    val mockitoRule = MockitoJUnit.rule()
+    val mockitoRule = MockitoJUnit.rule()!!
 
     @Test
     fun `getResponseBuyModel Has Return Value Test`() {
