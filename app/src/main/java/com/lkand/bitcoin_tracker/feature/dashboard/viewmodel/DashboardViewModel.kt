@@ -3,6 +3,7 @@ package com.lkand.bitcoin_tracker.feature.dashboard.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.os.CountDownTimer
+import com.lkand.bitcoin_tracker.BuildConfig
 import com.lkand.bitcoin_tracker.feature.dashboard.model.DashboardResponseModel
 import com.lkand.bitcoin_tracker.util.NetworkUtil
 import okhttp3.Response
@@ -24,7 +25,7 @@ class DashboardViewModel: ViewModel() {
         """.trimIndent())
 
     fun transform(): MutableLiveData<Int> {
-        val socket = NetworkUtil.create("wss://ws-feed.gdax.com/", bitcoinRateListener())
+        val socket = NetworkUtil.create(BuildConfig.WS_ENDPOINT, bitcoinRateListener())
 
         val timer = object: CountDownTimer(60000,100) {
             override fun onTick(millisUntilFinished: Long) {
