@@ -21,7 +21,7 @@ class DashboardViewModelUnitTest {
     val mockitoRule = MockitoJUnit.rule()
 
     @Test
-    fun getResponseBuyModelValidTest() {
+    fun `getResponseBuyModel Has Return Value Test`() {
         Whitebox.setInternalState(this.viewModel, "emptyDashboardResponseModel", this.dashboardResponseModel)
         whenever(this.dashboardResponseModel.side).thenReturn("buy")
         whenever(this.dashboardResponseModel.price).thenReturn(1000.00)
@@ -32,14 +32,14 @@ class DashboardViewModelUnitTest {
     }
 
     @Test
-    fun getResponseBuyModelEmptyTest() {
+    fun `getResponseBuyModel Has Empty Return Test`() {
         val responseBuyModel = this.viewModel.getResponseBuyModel()
         assertEquals("Loading ...", responseBuyModel.side)
         assertEquals(0.0, responseBuyModel.price)
     }
 
     @Test
-    fun getResponseSellModelValidTest() {
+    fun `getResponseSellModel Has Return Value Test`() {
         Whitebox.setInternalState(this.viewModel, "emptyDashboardResponseModel", this.dashboardResponseModel)
         whenever(this.dashboardResponseModel.side).thenReturn("sell")
         whenever(this.dashboardResponseModel.price).thenReturn(2000.00)
@@ -50,7 +50,7 @@ class DashboardViewModelUnitTest {
     }
 
     @Test
-    fun getResponseSellModelEmptyTest() {
+    fun `getResponseSellModel Has Empty Return Test`() {
         val responseBuyModel = this.viewModel.getResponseBuyModel()
         assertEquals("Loading ...", responseBuyModel.side)
         assertEquals(0.0, responseBuyModel.price)
