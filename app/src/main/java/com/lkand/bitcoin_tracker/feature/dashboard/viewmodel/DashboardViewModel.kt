@@ -3,7 +3,7 @@ package com.lkand.bitcoin_tracker.feature.dashboard.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.os.CountDownTimer
-import android.util.Log
+import com.lkand.bitcoin_tracker.BuildConfig
 import com.lkand.bitcoin_tracker.feature.dashboard.model.DashboardResponseModel
 import com.lkand.bitcoin_tracker.util.NetworkUtil
 import okhttp3.Response
@@ -11,15 +11,21 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
 class DashboardViewModel: ViewModel() {
-
     private val responseModel = MutableLiveData<DashboardResponseModel>()
     private val responseBuyModel = MutableLiveData<DashboardResponseModel>()
     private val responseSellModel = MutableLiveData<DashboardResponseModel>()
-    private val socketIsClosed = MutableLiveData<Boolean>()
+
     private val socketCountDown = MutableLiveData<Int>()
+    private val emptyDashboardResponseModel = DashboardResponseModel("""
+            {
+                type: "Loading ...",
+                price: 0,
+                side: "Loading ..."
+            }
+        """.trimIndent())
 
     fun transform(): MutableLiveData<Int> {
-        val socket = NetworkUtil.create("wss://ws-feed.gdax.com/", bitcoinRateListener())
+        val socket = NetworkUtil.create(BuildConfig.WS_ENDPOINT, bitcoinRateListener())
 
         val timer = object: CountDownTimer(60000,100) {
             override fun onTick(millisUntilFinished: Long) {
@@ -27,7 +33,6 @@ class DashboardViewModel: ViewModel() {
             }
             override fun onFinish() {
                 socket.close(1000, "10s up")
-                this@DashboardViewModel.socketIsClosed.value = true
             }
         }
         timer.start()
@@ -59,7 +64,6 @@ class DashboardViewModel: ViewModel() {
 
                 val responseModel = DashboardResponseModel(text)
                 this@DashboardViewModel.responseModel.postValue(responseModel)
-                Log.d("DebugUtil, ", text)
 
                 if (responseModel.side == "sell") {
                     this@DashboardViewModel.responseSellModel.postValue(responseModel)
@@ -71,14 +75,11 @@ class DashboardViewModel: ViewModel() {
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 super.onClosed(webSocket, code, reason)
-
                 webSocket.close(1000, null)
-                Log.d("DebugUtil", "Closed")
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 super.onFailure(webSocket, t, response)
-
                 t.printStackTrace()
             }
 
@@ -86,23 +87,19 @@ class DashboardViewModel: ViewModel() {
     }
 
     fun getResponseBuyModel(): DashboardResponseModel {
-        return if(this.responseBuyModel.value != null) this.responseBuyModel.value!! else DashboardResponseModel("""
-            {
-                type: "Loading ...",
-                price: 0,
-                side: "Loading ..."
-            }
-        """.trimIndent())
+        if(this.responseBuyModel.value != null) {
+            return this.responseBuyModel.value!!
+        }
+
+        return this.emptyDashboardResponseModel
     }
 
     fun getResponseSellModel(): DashboardResponseModel {
-        return if(this.responseSellModel.value != null) this.responseSellModel.value!! else DashboardResponseModel("""
-            {
-                type: "Loading ...",
-                price: 0,
-                side: "Loading ..."
-            }
-        """.trimIndent())
+        if(this.responseSellModel.value != null) {
+            return this.responseSellModel.value!!
+        }
+
+        return this.emptyDashboardResponseModel
     }
 
     fun getSocketCountDown(): String {
